@@ -3,12 +3,12 @@ package jPod;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -249,7 +249,7 @@ class jPodFrame extends JFrame implements MouseListener, MouseMotionListener {
     void initScreenPage() {
         ScreenPage.setParams(mWidth / 20, mWidth / 20, mWidth - mWidth / 10, mWidth - mWidth / 10, this); // 绘制播放器屏幕部分
         mCurrPage = new RootScreenMenu(mWidth / 20, mWidth / 20, mWidth - mWidth / 10, mWidth - mWidth / 10, this,
-                GBKStringUtil.GBKString("根目录"));
+                "根目录");
         getLayeredPane().add(mCurrPage, Integer.valueOf(Integer.MIN_VALUE + 2));
     }
 
@@ -788,7 +788,7 @@ class DeleteScreenMenu extends ScreenMenu {
         g2d.fillRect(0, mCursorPlace * sItemHeight, sWidth, sItemHeight);
 
         ArrayList<String> itemArr = new ArrayList<String>();
-        itemArr.add(GBKStringUtil.GBKString("请选择删除的项目"));
+        itemArr.add("请选择删除的项目");
         for (int i = 1; i < mPageArray.size() - mNumLastPageDefault + 1; ++i) {
             itemArr.add(mPageArray.get(i + mNumLastPageDefault - 1).name); // 将父页面所有有效选项的名字加入数组
         }
@@ -813,9 +813,9 @@ class RootScreenMenu extends ScreenMenu {
         super(null, name);
         mFatherPage = null;
 
-        mPageArray.add(new SongsScreenMenu(this, GBKStringUtil.GBKString("歌曲")));
-        mPageArray.add(new OptionsScreenMenu(this, GBKStringUtil.GBKString("设置")));
-        mPageArray.add(new ExitScreenMenu(this, GBKStringUtil.GBKString("退出")));
+        mPageArray.add(new SongsScreenMenu(this, "歌曲"));
+        mPageArray.add(new OptionsScreenMenu(this, "设置"));
+        mPageArray.add(new ExitScreenMenu(this, "退出"));
     }
 
     protected void handleLeftButton() {
@@ -828,9 +828,9 @@ class SongsScreenMenu extends ScreenMenu {
         super(father, name);
         mNumOfDefaultPages = 2;
 
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("添加歌单")));
+        mPageArray.add(new NullPage(this, "添加歌单"));
         mDeletePage = new DeleteScreenMenu(this,
-                GBKStringUtil.GBKString("删除歌单"), mPageArray, 2);
+                "删除歌单", mPageArray, 2);
 
         mPageArray.add(mDeletePage);
 
@@ -873,7 +873,7 @@ class SongsScreenMenu extends ScreenMenu {
                 }
                 Files.delete(Paths.get(dirName));
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, GBKStringUtil.GBKString("删除失败!"));
+                JOptionPane.showMessageDialog(this, "删除失败!");
                 mDeletePage.delPage = -1;
                 return;
             }
@@ -895,7 +895,7 @@ class SongsScreenMenu extends ScreenMenu {
         try {
             list = new SongsList(name, true);
         } catch (FileAlreadyExistsException e) {
-            JOptionPane.showMessageDialog(this, GBKStringUtil.GBKString("歌单已存在"));
+            JOptionPane.showMessageDialog(this, "歌单已存在");
         }
 
         sequentialAdd(list);
@@ -924,7 +924,7 @@ class SongsScreenMenu extends ScreenMenu {
         if (mCurrItem != 0) { // 第0项为新建选项
             super.handleRightButton();
         } else {
-            mAddSongList = JOptionPane.showInputDialog(this, GBKStringUtil.GBKString("请输入歌单名"));
+            mAddSongList = JOptionPane.showInputDialog(this, "请输入歌单名");
             sFrame.getLayeredPane().repaint();
         }
     }
@@ -939,10 +939,10 @@ class SongsListPage extends ScreenMenu {
         super(father, name);
 
         mNumOfDefaultPages = 3; // 有三个非常规页面
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("添加新的歌曲")));
+        mPageArray.add(new NullPage(this, "添加新的歌曲"));
 
-        mDeletePage = new DeleteScreenMenu(this, GBKStringUtil.GBKString("删除歌曲"), mPageArray, mNumOfDefaultPages);
-        mAddLyricsPage = new AddLyricsMenu(this, GBKStringUtil.GBKString("添加歌词"), mPageArray, mNumOfDefaultPages);
+        mDeletePage = new DeleteScreenMenu(this, "删除歌曲", mPageArray, mNumOfDefaultPages);
+        mAddLyricsPage = new AddLyricsMenu(this, "添加歌词", mPageArray, mNumOfDefaultPages);
         mPageArray.add(mDeletePage);
         mPageArray.add(mAddLyricsPage);
 
@@ -975,7 +975,7 @@ class SongsListPage extends ScreenMenu {
                 Files.delete(Paths.get(dirName));
             } catch (IOException e) {
                 mDeletePage.delPage = -1;
-                JOptionPane.showMessageDialog(this, GBKStringUtil.GBKString("删除失败!"));
+                JOptionPane.showMessageDialog(this, "删除失败!");
                 return;
             }
 
@@ -996,10 +996,10 @@ class SongsListPage extends ScreenMenu {
         try {
             file = checkFile(file);
         } catch (FileAlreadyExistsException e) {
-            JOptionPane.showMessageDialog(this, GBKStringUtil.GBKString("歌曲已存在"));
+            JOptionPane.showMessageDialog(this, "歌曲已存在");
             return;
         } catch (MusicTypeErrorException e) {
-            JOptionPane.showMessageDialog(this, GBKStringUtil.GBKString("请添加mp3或flac格式的歌曲"));
+            JOptionPane.showMessageDialog(this, "请添加mp3或flac格式的歌曲");
             return;
         }
 
@@ -1047,7 +1047,7 @@ class SongsListPage extends ScreenMenu {
                 Files.copy(Paths.get(file), Paths.get(newFile), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this,
-                        "IOException in SongsListPage.checkFile:" + GBKStringUtil.GBKString("复制音乐文件失败!"));
+                        "IOException in SongsListPage.checkFile:" + "复制音乐文件失败!");
             }
 
             return newFile;
@@ -1084,7 +1084,7 @@ class SongsListPage extends ScreenMenu {
         } else {
             JFileChooser chooser = new JFileChooser(); // 若为添加歌曲选项则选择文件位置
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.showDialog(new JLabel(), GBKStringUtil.GBKString("选择"));
+            chooser.showDialog(new JLabel(), "选择");
             mAddSongPath = chooser.getSelectedFile().getPath();
 
             sFrame.getLayeredPane().repaint();
@@ -1121,7 +1121,7 @@ class AddLyricsMenu extends ScreenMenu {
         g2d.fillRect(0, mCursorPlace * sItemHeight, sWidth, sItemHeight);
 
         ArrayList<String> itemArr = new ArrayList<String>();
-        itemArr.add(GBKStringUtil.GBKString("请选择要添加歌词的歌曲"));
+        itemArr.add("请选择要添加歌词的歌曲");
         for (int i = 1; i < mPageArray.size() - mNumLastPageDefault + 1; ++i) {
             itemArr.add(mPageArray.get(i + mNumLastPageDefault - 1).name);
         }
@@ -1138,14 +1138,14 @@ class AddLyricsMenu extends ScreenMenu {
         String lyricPath = getLyricPath(musicPath);
         File file = new File(lyricPath);
         if (file.exists()) {
-            JOptionPane.showMessageDialog(this, GBKStringUtil.GBKString("歌词已存在"));
+            JOptionPane.showMessageDialog(this, "歌词已存在");
             return;
         }
 
         try {
             JFileChooser chooser = new JFileChooser();
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.showDialog(new JLabel(), GBKStringUtil.GBKString("选择"));
+            chooser.showDialog(new JLabel(), "选择");
             String getLyricPath = chooser.getSelectedFile().getPath();
 
             checkLyricType(getLyricPath);
@@ -1153,7 +1153,7 @@ class AddLyricsMenu extends ScreenMenu {
             Files.copy(Paths.get(getLyricPath), Paths.get(lyricPath), StandardCopyOption.REPLACE_EXISTING);
 
         } catch (LyricTypeException lte) {
-            JOptionPane.showMessageDialog(this, GBKStringUtil.GBKString("请选择txt文件"));
+            JOptionPane.showMessageDialog(this, "请选择txt文件");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "IOException in AddLyricsMenu.handleRightButton");
         }
@@ -1339,7 +1339,7 @@ class LyricPage extends ScreenPage {
                     int timeSep = lyricLine.indexOf(" ");
                     mTimeList.add(lyricLine.substring(0, timeSep)); // 加入时间轴
                     mSecList.add(timeToInt(lyricLine.substring(0, timeSep))); // 分秒换算成秒并加入时间轴
-                    mLyricsList.add(GBKStringUtil.GBKString(lyricLine.substring(timeSep + 1, lyricLine.length()))); // 加入歌词轴
+                    mLyricsList.add(lyricLine.substring(timeSep + 1, lyricLine.length())); // 加入歌词轴
                 }
 
                 reader.close();
@@ -1400,7 +1400,7 @@ class LyricPage extends ScreenPage {
             g2d.setColor(Options.charForegroundColor);
 
             if (currLyricIdx >= 0) {
-                lyric = GBKStringUtil.GBKString(mLyricsList.get(currLyricIdx));
+                lyric = mLyricsList.get(currLyricIdx);
             }
 
             int oriSize = sFont.getSize(); // 根据歌词长度动态调整大小
@@ -1491,10 +1491,10 @@ class OptionsScreenMenu extends ScreenMenu {
     OptionsScreenMenu(ScreenPage father, String name) {
         super(father, name);
 
-        mPageArray.add(new PlayOptionsPage(this, GBKStringUtil.GBKString("播放设置")));
-        mPageArray.add(new SkinOptionsPage(this, GBKStringUtil.GBKString("皮肤设置")));
-        mPageArray.add(new FontOptionsPage(this, GBKStringUtil.GBKString("字体设置")));
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("初始化")));
+        mPageArray.add(new PlayOptionsPage(this, "播放设置"));
+        mPageArray.add(new SkinOptionsPage(this, "皮肤设置"));
+        mPageArray.add(new FontOptionsPage(this, "字体设置"));
+        mPageArray.add(new NullPage(this, "初始化"));
     }
 
     protected void handleRightButton() {
@@ -1511,14 +1511,14 @@ class PlayOptionsPage extends ScreenMenu {
     PlayOptionsPage(ScreenPage father, String name) {
         super(father, name);
 
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("顺序播放")));
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("随机播放")));
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("单曲循环")));
+        mPageArray.add(new NullPage(this, "顺序播放"));
+        mPageArray.add(new NullPage(this, "随机播放"));
+        mPageArray.add(new NullPage(this, "单曲循环"));
     }
 
     protected void handleRightButton() {
         Options.setOption(Integer.toString(mCurrItem), Options.OptionsEnum.PLAY);
-        JOptionPane.showMessageDialog(this, GBKStringUtil.GBKString("播放设置已修改为:") + mPageArray.get(mCurrItem).name);
+        JOptionPane.showMessageDialog(this, "播放设置已修改为:" + mPageArray.get(mCurrItem).name);
     }
 }
 
@@ -1526,14 +1526,14 @@ class SkinOptionsPage extends ScreenMenu {
     SkinOptionsPage(ScreenPage father, String name) {
         super(father, name);
 
-        mPageArray.add(new ColorPage(this, GBKStringUtil.GBKString("播放器颜色"), Options.OptionsEnum.BODY));
-        mPageArray.add(new ColorPage(this, GBKStringUtil.GBKString("控制轮盘颜色"), Options.OptionsEnum.CTRL));
-        mPageArray.add(new ColorPage(this, GBKStringUtil.GBKString("进度条已播放颜色"), Options.OptionsEnum.PBAC));
-        mPageArray.add(new ColorPage(this, GBKStringUtil.GBKString("进度条未播放颜色"), Options.OptionsEnum.PBIAC));
-        mPageArray.add(new ColorPage(this, GBKStringUtil.GBKString("屏幕背景颜色"), Options.OptionsEnum.SBGC));
-        mPageArray.add(new ColorPage(this, GBKStringUtil.GBKString("屏幕前景颜色"), Options.OptionsEnum.SFGC));
-        mPageArray.add(new ColorPage(this, GBKStringUtil.GBKString("字体背景颜色"), Options.OptionsEnum.CBGC));
-        mPageArray.add(new ColorPage(this, GBKStringUtil.GBKString("字体前景颜色"), Options.OptionsEnum.CFGC));
+        mPageArray.add(new ColorPage(this, "播放器颜色", Options.OptionsEnum.BODY));
+        mPageArray.add(new ColorPage(this, "控制轮盘颜色", Options.OptionsEnum.CTRL));
+        mPageArray.add(new ColorPage(this, "进度条已播放颜色", Options.OptionsEnum.PBAC));
+        mPageArray.add(new ColorPage(this, "进度条未播放颜色", Options.OptionsEnum.PBIAC));
+        mPageArray.add(new ColorPage(this, "屏幕背景颜色", Options.OptionsEnum.SBGC));
+        mPageArray.add(new ColorPage(this, "屏幕前景颜色", Options.OptionsEnum.SFGC));
+        mPageArray.add(new ColorPage(this, "字体背景颜色", Options.OptionsEnum.CBGC));
+        mPageArray.add(new ColorPage(this, "字体前景颜色", Options.OptionsEnum.CFGC));
     }
 }
 
@@ -1541,26 +1541,26 @@ class FontOptionsPage extends ScreenMenu {
     FontOptionsPage(ScreenPage father, String name) {
         super(father, name);
 
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("自定义字体")));
+        mPageArray.add(new NullPage(this, "自定义字体"));
         mFonts.add(null);
 
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("宋体")));
-        mFonts.add(GBKStringUtil.GBKString("宋体"));
+        mPageArray.add(new NullPage(this, "宋体"));
+        mFonts.add("宋体");
 
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("仿宋")));
-        mFonts.add(GBKStringUtil.GBKString("仿宋"));
+        mPageArray.add(new NullPage(this, "仿宋"));
+        mFonts.add("仿宋");
 
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("楷体")));
-        mFonts.add(GBKStringUtil.GBKString("楷体"));
+        mPageArray.add(new NullPage(this, "楷体"));
+        mFonts.add("楷体");
 
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("黑体")));
-        mFonts.add(GBKStringUtil.GBKString("黑体"));
+        mPageArray.add(new NullPage(this, "黑体"));
+        mFonts.add("黑体");
     }
 
     protected void handleRightButton() {
         if (mCurrItem == 0) {
-            String customColor = JOptionPane.showInputDialog(GBKStringUtil.GBKString("请输入字体名称")); // 输入自定义字体
-            mFonts.set(0, GBKStringUtil.GBKString(customColor));
+            String customFont = JOptionPane.showInputDialog("请输入字体名称"); // 输入自定义字体
+            mFonts.set(0, customFont);
         }
 
         String newFont = mFonts.get(mCurrItem);
@@ -1577,43 +1577,43 @@ class ColorPage extends ScreenMenu {
         super(father, name);
         mSkinColor = skinColor;
 
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("自定义颜色")));
+        mPageArray.add(new NullPage(this, "自定义颜色"));
         mColors.add("000000");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("黑色")));
+        mPageArray.add(new NullPage(this, "黑色"));
         mColors.add("000000");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("白色")));
+        mPageArray.add(new NullPage(this, "白色"));
         mColors.add("ffffff");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("灰色")));
+        mPageArray.add(new NullPage(this, "灰色"));
         mColors.add("808a87");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("红色")));
+        mPageArray.add(new NullPage(this, "红色"));
         mColors.add("ff0000");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("粉红")));
+        mPageArray.add(new NullPage(this, "粉红"));
         mColors.add("e799b0");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("深红")));
+        mPageArray.add(new NullPage(this, "深红"));
         mColors.add("990033");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("绿色")));
+        mPageArray.add(new NullPage(this, "绿色"));
         mColors.add("00ff00");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("青色")));
+        mPageArray.add(new NullPage(this, "青色"));
         mColors.add("00ffff");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("深绿")));
+        mPageArray.add(new NullPage(this, "深绿"));
         mColors.add("228b22");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("黄色")));
+        mPageArray.add(new NullPage(this, "黄色"));
         mColors.add("ffff00");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("橙色")));
+        mPageArray.add(new NullPage(this, "橙色"));
         mColors.add("ff8000");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("橙红色")));
+        mPageArray.add(new NullPage(this, "橙红色"));
         mColors.add("db7d74");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("棕色")));
+        mPageArray.add(new NullPage(this, "棕色"));
         mColors.add("802a2a");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("蓝色")));
+        mPageArray.add(new NullPage(this, "蓝色"));
         mColors.add("0000ff");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("天蓝色")));
+        mPageArray.add(new NullPage(this, "天蓝色"));
         mColors.add("9ac8e2");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("深蓝色")));
+        mPageArray.add(new NullPage(this, "深蓝色"));
         mColors.add("576690");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("紫色")));
+        mPageArray.add(new NullPage(this, "紫色"));
         mColors.add("8a2be2");
-        mPageArray.add(new NullPage(this, GBKStringUtil.GBKString("淡紫色")));
+        mPageArray.add(new NullPage(this, "淡紫色"));
         mColors.add("b8a6d9");
     }
 
@@ -1744,7 +1744,7 @@ class Options {
                 writer.write("0");
                 writer.write('\n');
 
-                writer.write(GBKStringUtil.GBKString("宋体"));
+                writer.write("宋体");
                 writer.write('\n');
 
                 writer.write("cccccc");
@@ -1785,7 +1785,7 @@ class Options {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(new FileInputStream(file)));
             playOption = PlayOptions.values()[Integer.parseInt(reader.readLine())];
-            fontName = GBKStringUtil.GBKString(reader.readLine());
+            fontName = reader.readLine();
             ScreenPage.setFont();
             playerBodyColor = RGBATrans(reader.readLine());
             controllerColor = RGBATrans(reader.readLine());
