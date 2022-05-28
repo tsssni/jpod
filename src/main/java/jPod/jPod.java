@@ -313,10 +313,14 @@ class MusicPlayThread extends Thread {
 
     public void run() { // 用于播放音乐的线程
         mTimer = new Timer(1000, new TimeActionListener(mFrame.currSong.duration)); // 用于计算播放时间的计时器
-        mTimer.start();
+        
 
         try {
             File file = new File(mFrame.currSong.musicPath);
+            if (file.length() >= 40 * 1024 * 1024) {
+                throw new SongFileExceedMaximumException();
+            }
+
             AudioInputStream stream = null;
             Clip audioClip = null;
             if (mFrame.currSong.musicPath.endsWith(".mp3")) {
@@ -334,14 +338,20 @@ class MusicPlayThread extends Thread {
                 stream = new FlacAudioFileReader().getAudioInputStream(file);
                 AudioFormat baseFormat = stream.getFormat();
 
-                AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
-                        baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
+                AudioFormat format = stream.getFormat();
+                if (format.getEncoding() != AudioFormat.Encoding.PCM_SIGNED) {
+                    format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(), 16,
+                            baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
+                }
+
                 Flac2PcmAudioInputStream flacStream = new Flac2PcmAudioInputStream(stream, format, file.length());
                 DataLine.Info dinfo = new DataLine.Info(Clip.class, flacStream.getFormat(), AudioSystem.NOT_SPECIFIED);
 
                 audioClip = (Clip) AudioSystem.getLine(dinfo);
                 audioClip.open(flacStream);
             }
+
+            mTimer.start();
 
             while (!mFrame.stop) {
                 if (TimeActionListener.progressBar) {
@@ -365,10 +375,10 @@ class MusicPlayThread extends Thread {
 
             audioClip.flush();
             audioClip.close();
-            stream.close();
-            mTimer.stop();
-            mFrame.stop = false;
+            stream.close();       
 
+        } catch(SongFileExceedMaximumException e){
+            JOptionPane.showMessageDialog(ScreenPage.sFrame, "歌曲文件超过40MB,无法播放");
         } catch (UnsupportedAudioFileException e) {
             JOptionPane.showMessageDialog(ScreenPage.sFrame, "UnsupportedAudioFileException in MusicPlayThread.run");
         } catch (IOException e) {
@@ -377,6 +387,9 @@ class MusicPlayThread extends Thread {
             JOptionPane.showMessageDialog(ScreenPage.sFrame, "LineUnavailableException in MusicPlayThread.run");
         } catch (InterruptedException e) {
             JOptionPane.showMessageDialog(ScreenPage.sFrame, "InterruptedException in MusicPlayThread.run");
+        } finally {
+            mTimer.stop();
+            mFrame.stop = false;
         }
 
     }
@@ -1237,7 +1250,7 @@ class SongPage extends ScreenPage {
             int i = 0;
             while (wordWidth > sWidth) {
                 sFont = new Font(Options.fontName, Font.PLAIN, oriSize - (++i));
-                wordWidth = g2d.getFontMetrics(sFont).stringWidth(mSong.musicName);
+                wordWidth = g2d.getFontMetrics(sFont).stringWidth(mSong.artist);
             }
         }
         edgeWidth = (sWidth - wordWidth) / 2;
@@ -2069,6 +2082,10 @@ class Song {
     String lyrics;
     int duration;
     Image cover;
+}
+
+class SongFileExceedMaximumException extends Exception {
+    
 }
 
 class LyricTypeException extends Exception {
